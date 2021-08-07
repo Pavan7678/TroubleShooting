@@ -1,0 +1,66 @@
+Below are the service log location of different services .
+
+
+Cloudera:
+/var/log/cloudera-scm-server
+
+/var/log/cloudera-scm-agent
+
+/var/log/cloudera-scm-alertpublisher
+
+/var/log/cloudera-scm-firehose
+
+/var/log/cloudera-scm-eventserver
+
+Hue:
+
+/var/log/hue
+
+Mapreduce:
+
+/var/log/hadoop-mapreduce
+
+ /var/log/hadoop-0.20-mapreduce
+
+Hive:
+
+/var/log/hive
+
+Yarn:
+
+ /var/log/hadoop-yarn
+
+Impala:
+
+/var/log/impala-minidumps
+/var/log/impalad
+
+Oozie:
+
+/var/log/oozie
+
+HDFS:
+
+/var/log/hadoop-hdfs
+
+Zookeeper:
+
+/var/log/zookeeper
+
+Sqoop2: 
+
+/var/log/sqoop2
+
+Other: 
+ /var/log/samba
+ /var/log/statestore
+ /var/log/audit
+/var/log/ntpstats
+/var/log/cups
+/var/log/sssd
+/var/log/prelink
+ /var/log/sa
+ /var/log/catalogd
+ /var/log/ConsoleKit
+ /var/log/httpd
+ /var/log/gitlab
