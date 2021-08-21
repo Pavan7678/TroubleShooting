@@ -1,0 +1,36 @@
+#####error "host key not found."####
+
+Resolution :- checked and created the host key on the CM node for the airflow user and copied onto the transferred node's authorized_keys.
+
+Steps:- 
+- login to cm host
+- su airflow
+- ssh-keygen -t rsa 	(generate ssh key for airflow user)
+- login to transfer node
+- copy id_rsa.pub keys into transfer nodes authorized_keys.
+
+
+####getting an error while renewing the keytab for####
+ 
+Resolution :- created the keytab for the user,after creation of keytab the issue get resolved.
+
+steps:
+-login to cm server
+-ktutil:  add_entry -password -p user@KITE.LOCAL -k 1 -e aes256-cts-hmac-sha1-96
+-ktutil: wkt /path_to_keytab_file/ 
+
+
+
+####issue with Bash prompt.####
+
+Resolution :- checked bash_profile were missing
+
+Step :- We have copied profile file from other host to affected host.
+
+####running spark job and it got failed.####
+
+Resolution :- having permission issue because of that job was failing
+
+Step :-
+         -setfacl -R -m u:user:rwx /path/to/logs
+ 
