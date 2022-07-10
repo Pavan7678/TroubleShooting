@@ -18,8 +18,13 @@ Answer :-  ulimit to be -  open files
 Error :- java.io.EOFException in HDFS 0.22.0
   java.io.DataInputStream.readShort(DataInputStream.java:298)
         at org.apache.hadoop.hdfs.DFSClient$DFSOutputStream
-Answer :- From Oracle Reads some number of bytes from the contained input stream and stores them into the buffer array b. The number of bytes actually read is returned as an integer. This method blocks until input data is available, end of file is detected, or an exception is thrown.  
-The first byte read is stored into element b[0], the next one into b[1], and so on. The number of bytes read is, at most, equal to the length of b. Let k be the number of bytes actually read; these bytes will be stored in elements b[0] through b[k-1], leaving elements b[k] through b[b.length-1] unaffected. 
+
+Answer :- From Oracle Reads some number of bytes from the contained input stream and stores them into the buffer array 
+b. The number of bytes actually read is returned as an integer.
+This method blocks until input data is available, end of file is detected, or an exception is thrown.  
+The first byte read is stored into element b[0], the next one into b[1], and so on.
+The number of bytes read is, at most, equal to the length of 
+b. Let k be the number of bytes actually read; these bytes will be stored in elements b[0] through b[k-1], leaving elements b[k] through b[b.length-1] unaffected. 
 The read(b) method has the same effect as: 
  read(b, 0, b.length)
 --------------------------------------------------------------------------- 
@@ -35,7 +40,8 @@ This step fixes the problem at the cost of erasing all existing data in the clus
 3. Reformat the NameNode. WARNING: all HDFS data is lost during this process! 
 4. Restart the cluster. 
 
-When deleting all the HDFS data and starting from scratch does not sound like a good idea (it might be ok during the initial setup/testing), you might give the second approach a try.
+When deleting all the HDFS data and starting from scratch does not sound like a good idea
+(it might be ok during the initial setup/testing), you might give the second approach a try.
 
 Solution 2: Manually update the namespaceID of problematic DataNodes
 Big thanks to Jared Stehler for the following suggestion. This workaround is “minimally invasive” as you only have to edit a single file on the problematic DataNodes:
@@ -127,20 +133,30 @@ SET mapreduce.job.split.metainfo.maxsize=20000000;
 -----------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 
-ERROR org.apache.hadoop.security.UserGroupInformation: PriviledgedActionException as:mapred cause:org.apache.hadoop.hdfs.server.namenode.SafeModeException: Cannot delete /tmp/hadoop-root/mapred/system. Name node is in safe mode
+ERROR org.apache.hadoop.security.UserGroupInformation: 
+PriviledgedActionException as:mapred cause:org.apache.hadoop.hdfs.server.namenode.SafeModeException: 
+Cannot delete /tmp/hadoop-root/mapred/system. Name node is in safe mode
 
 error that you cluster is in "safe mode"
 sudo -u hdfs hadoop dfsadmin -safemode get   ------  get the status
 Cause
-During start up, NameNode loads the filesystem state from fsimage and edits log file. It then waits for data nodes to report their blocks so that it does not prematurely start replicating the blocks though, enough replicas already exist in the cluster.
+During start up, NameNode loads the filesystem state from fsimage and edits log file. 
+It then waits for data nodes to report their blocks so that it does not prematurely start replicating the blocks though,
+enough replicas already exist in the cluster.
 
-During this time, NameNode stays in safe mode. A safe mode for NameNode is essentially a read-only mode for the HDFS cluster, it does not allow any modifications to file system or blocks. Normally, NameNode disables safe mode automatically at the beginning.
+During this time, NameNode stays in safe mode.
+A safe mode for NameNode is essentially a read-only mode for the HDFS cluster, it does not allow any modifications to file system or blocks.
+Normally, NameNode disables safe mode automatically at the beginning.
 
-If required, HDFS can be placed in safe mode explicitly using bin/hadoop dfsadmin -safemode command. The NameNode front page shows whether safe mode is on or off.
+If required, HDFS can be placed in safe mode explicitly using bin/hadoop dfsadmin -safemode command. 
+The NameNode front page shows whether safe mode is on or off.
 Resolution
-A workaround to this issue is to manually move the NameNode out of safe mode. Before doing this, confirm you know and understand why the NameNode is stuck in safe mode by reviewing the status of all DataNodes and the NameNode logs.  In some cases manually disabling safemode can lead to dataloss.
+A workaround to this issue is to manually move the NameNode out of safe mode. 
+Before doing this, confirm you know and understand why the NameNode is stuck in safe mode by reviewing the status of all DataNodes and the NameNode logs.  
+In some cases manually disabling safemode can lead to dataloss.
 
-Please note that you must run the command using the HDFS OS user which is the default super user for HDFS. Otherwise, you will encounter the following error: "Access denied for user Hadoop. Superuser privilege is required".
+Please note that you must run the command using the HDFS OS user which is the default super user for HDFS. 
+Otherwise, you will encounter the following error: "Access denied for user Hadoop. Superuser privilege is required".
  
 1. Run the command below using the HDFS OS user to disable safe mode: 
 sudo -u hdfs hadoop dfsadmin -safemode leave
@@ -157,13 +173,19 @@ drwxrwxrwx&nbsp;&nbsp; - root supergroup&nbsp 0 2012-11-28 23:56 /tmp/test_outpu
 ---------------------------------------------------------------------------------------------------------------------------------------------------------------
 Error :- NoRouteToHostException
 
-analysis:    This problem no route to host commonplace, either generally between namenode and datanode hostname itself on mutual ping ping nowhere, this probability is small, because all know that to ensure that the master and slaves nodes are able to communicate properly, it will be checked. It is most likely that a firewall is not closed, or because not view the status of the firewall, the firewall turned off so mistaken.
+analysis:    This problem no route to host commonplace, either generally between namenode and datanode hostname itself on mutual ping ping nowhere,
+this probability is small, because all know that to ensure that the master and slaves nodes are able to communicate properly, 
+it will be checked. It is most likely that a firewall is not closed, or because not view the status of the firewall, the firewall turned off so mistaken.
 
 solution:
-(1) host name from the namenode host ping other slaves nodes (note the host name of the slaves nodes), If the ping fails, possibly because namenode node /etc/hosts not mapping between host name and IP address configuration, completion mappings between host names and IP addresses.
+(1) host name from the namenode host ping other slaves nodes (note the host name of the slaves nodes), 
+If the ping fails, possibly because namenode node /etc/hosts not mapping between host name and IP address configuration, 
+completion mappings between host names and IP addresses.
 
 
-(2) from the host name datanode host ping master node (host name of note is the node), If the ping fails, possibly because datenode node /etc/hosts is not configured mappings between host names and IP addresses, to complete a hostname mapping between IP addresses.
+(2) from the host name datanode host ping master node (host name of note is the node), 
+If the ping fails, possibly because datenode node /etc/hosts is not configured mappings between host names and IP addresses,
+to complete a hostname mapping between IP addresses.
 
 
 (3) Check each machine node firewall is turned off (or set the firewall on, but for us the designated port open, best to turn off the firewall):
@@ -204,11 +226,15 @@ You must take bakup before doing such actions
 cp /Users/yourmacusername/.ssh/known_hosts /Users/yourmacusername/.ssh/known_hosts.bak
 if something wrong happen you can resolve.
 ssh-keygen -R [IP_ADDRESS]
+
+=============================================================================================================================================================
 Not a File Exception      Note it down 
-Possible Problem:You may have created a directory inside the input directory in the HDFS. For example, this might happen if you run bin/hadoop dfs -put conf input twice in a row (this would create a subdirectory in input... why?).
+Possible Problem:You may have created a directory inside the input directory in the HDFS. 
+For example, this might happen if you run bin/hadoop dfs -put conf input twice in a row (this would create a subdirectory in input... why?).
 Possible Solution:The easiest way to get the example run is to just start over and make the input anew. 
 $bin/hadoop dfs -rmr input   $bin/hadoop dfs -put conf input
 Below this Example to Understand Not a file Exception
+==================== =================================================================================================
 
 Not a File Exception when running pyspark in Hadoop
 I scoop two datasets from 2 diff sources into Hive. I created a union of the two tables in hive using
